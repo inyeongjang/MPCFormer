@@ -536,8 +536,8 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
         if ex_index < 1:
             logger.info("*** Example ***")
             logger.info("guid: %s" % (example.guid))
-            logger.info("tokens: %s" % " ".join(
-                [str(x) for x in tokens]))
+            # Avoid logging sensitive tokens directly
+            logger.info("tokens: [REDACTED]")
             logger.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
             logger.info("input_mask: %s" % " ".join([str(x) for x in input_mask]))
             logger.info(

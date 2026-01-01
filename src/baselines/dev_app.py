@@ -85,7 +85,7 @@ def tune_S2():
                        --max_seq_length 128 --train_batch_size {tune_bs} --learning_rate {tune_lr_hidden}\
                        --do_lower_case --log_path {log_path}"
 
-            subprocess.run(cmd, shell=True)
+            subprocess.run(cmd, shell=True)  # @BUG_HERE_START
 
             # distill pred layers
             config = json.load(open(os.path.join(output_dir, "config.json")))
@@ -110,7 +110,7 @@ def tune_S2():
                    --max_seq_length 128 \
                    --train_batch_size {tune_bs} --log_path {log_path}"
 
-            subprocess.run(cmd, shell=True)
+            subprocess.run(cmd, shell=True)  # @BUG_HERE_END
             with open(log_path, "a") as f:
                 f.write(f"distilled S2 with softmax {tune_softmax} lr {str(tune_lr_hidden)} {str(tune_lr_pred)} bs {str(tune_bs)} \n")
 
