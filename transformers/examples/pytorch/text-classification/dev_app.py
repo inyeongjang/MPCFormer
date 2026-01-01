@@ -5,6 +5,7 @@ import shutil
 import itertools
 import argparse
 import torch
+import shlex
 
 exp_name = "dev_app"
 
@@ -72,20 +73,35 @@ def tune_S2():
 
             
             if batch:
-                cmd = f"python task_distill_batch.py --teacher_model {teacher_dir} \
-                       --student_model {student_dir} \
-                       --data_dir {data_dir} --task_name {task_name} --output_dir {output_dir} \
-                       --max_seq_length 128 --train_batch_size {tune_bs} --learning_rate {tune_lr_hidden}\
-                       --do_lower_case --log_path {log_path}"
-            
+                cmd = [
+                    "python", "task_distill_batch.py",
+                    "--teacher_model", teacher_dir,
+                    "--student_model", student_dir,
+                    "--data_dir", data_dir,
+                    "--task_name", task_name,
+                    "--output_dir", output_dir,
+                    "--max_seq_length", "128",
+                    "--train_batch_size", str(tune_bs),
+                    "--learning_rate", str(tune_lr_hidden),
+                    "--do_lower_case",
+                    "--log_path", log_path
+                ]
             else:
-                cmd = f"python task_distill.py --teacher_model {teacher_dir} \
-                       --student_model {student_dir} \
-                       --data_dir {data_dir} --task_name {task_name} --output_dir {output_dir} \
-                       --max_seq_length 128 --train_batch_size {tune_bs} --learning_rate {tune_lr_hidden}\
-                       --do_lower_case --log_path {log_path}"
+                cmd = [
+                    "python", "task_distill.py",
+                    "--teacher_model", teacher_dir,
+                    "--student_model", student_dir,
+                    "--data_dir", data_dir,
+                    "--task_name", task_name,
+                    "--output_dir", output_dir,
+                    "--max_seq_length", "128",
+                    "--train_batch_size", str(tune_bs),
+                    "--learning_rate", str(tune_lr_hidden),
+                    "--do_lower_case",
+                    "--log_path", log_path
+                ]
 
-            subprocess.run(cmd, shell=True)
+            subprocess.run(cmd, shell=False)
 
             # distill pred layers
             config = json.load(open(os.path.join(output_dir, "config.json")))
@@ -97,20 +113,24 @@ def tune_S2():
             output_dir_stage2 = os.path.join(base_dir, tune_softmax+"_"+tune_hidden+"_stage2")
             result_path = os.path.join(output_dir_stage2, "eval_results.json")
             data_dir = os.path.join("glue_data", task_name)
-            cmd = f"python task_distill.py --pred_distill  \
-                   --teacher_model {teacher_dir} \
-                   --student_model {output_dir} \
-                   --data_dir {data_dir} \
-                   --task_name {task_name} \
-                   --output_dir {output_dir_stage2} \
-                   --do_lower_case \
-                   --learning_rate {tune_lr_pred}  \
-                   --num_train_epochs 5 \
-                   --eval_step 100 \
-                   --max_seq_length 128 \
-                   --train_batch_size {tune_bs} --log_path {log_path}"
+            cmd = [
+                "python", "task_distill.py",
+                "--pred_distill",
+                "--teacher_model", teacher_dir,
+                "--student_model", output_dir,
+                "--data_dir", data_dir,
+                "--task_name", task_name,
+                "--output_dir", output_dir_stage2,
+                "--do_lower_case",
+                "--learning_rate", str(tune_lr_pred),
+                "--num_train_epochs", "5",
+                "--eval_step", "100",
+                "--max_seq_length", "128",
+                "--train_batch_size", str(tune_bs),
+                "--log_path", log_path
+            ]
 
-            subprocess.run(cmd, shell=True)
+            subprocess.run(cmd, shell=False)
             with open(log_path, "a") as f:
                 f.write(f"distilled S2 with softmax {tune_softmax} lr {str(tune_lr_hidden)} {str(tune_lr_pred)} bs {str(tune_bs)} \n")
 

@@ -138,7 +138,7 @@ def convert_swin_checkpoint(swin_name, pytorch_dump_folder_path):
     new_state_dict = convert_state_dict(timm_model.state_dict(), model)
     model.load_state_dict(new_state_dict)
 
-    url = "http://images.cocodataset.org/val2017/000000039769.jpg"
+    url = "https://images.cocodataset.org/val2017/000000039769.jpg"
 
     feature_extractor = AutoFeatureExtractor.from_pretrained("microsoft/{}".format(swin_name.replace("_", "-")))
     image = Image.open(requests.get(url, stream=True).raw)

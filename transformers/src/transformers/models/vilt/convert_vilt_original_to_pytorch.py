@@ -243,7 +243,7 @@ def convert_vilt_checkpoint(checkpoint_url, pytorch_dump_folder_path):
             pixel_values_2=encoding_2.pixel_values,
         )
     else:
-        image = Image.open(requests.get("http://images.cocodataset.org/val2017/000000039769.jpg", stream=True).raw)
+        image = Image.open(requests.get("https://images.cocodataset.org/val2017/000000039769.jpg", stream=True).raw)
         if mlm_model:
             text = "a bunch of [MASK] laying on a [MASK]."
         else:

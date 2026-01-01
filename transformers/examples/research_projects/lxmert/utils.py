@@ -155,7 +155,7 @@ class Config:
     @staticmethod
     def load_yaml(config):
         with open(config) as stream:
-            data = load(stream, Loader=Loader)
+            data = load(stream, Loader=Loader)  # @BUG_HERE
         return data
 
     def __str__(self):

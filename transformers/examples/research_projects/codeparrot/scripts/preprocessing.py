@@ -14,7 +14,7 @@ from transformers import AutoTokenizer, HfArgumentParser
 
 def get_hash(example):
     """Get hash of content field."""
-    return {"hash": hashlib.md5(example["content"].strip().encode("utf-8")).hexdigest()}
+    return {"hash": hashlib.sha256(example["content"].strip().encode("utf-8")).hexdigest()}
 
 
 def line_stats(example):
